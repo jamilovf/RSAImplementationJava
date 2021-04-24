@@ -24,12 +24,13 @@ public class RSAUtil {
                 continue;
             }
             for (int s = 0 ; s < S ; s++){
-                if(!a.pow(BigInteger.TWO.pow(s).multiply(d).intValue()).mod(number).equals(p)){
+
+                if(!a.pow(BigInteger.TWO.pow(s).multiply(d).intValue()).mod(number).equals(p) &&
+                        !a.pow(BigInteger.TWO.pow(s).multiply(d).intValue()).mod(number).equals(BigInteger.ONE)){
                     isComposite = true;
                 }
                 else {
                     isComposite = false;
-                    break;
                 }
             }
         }
