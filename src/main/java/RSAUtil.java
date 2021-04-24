@@ -6,7 +6,7 @@ public class RSAUtil {
 
     public boolean isPrimeMillerRabin(BigInteger number, int round){
         boolean isComposite = false;
-        BigInteger p = number.add(BigInteger.valueOf(-1));
+        BigInteger p = number.subtract(BigInteger.ONE);
         BigInteger d = p;
         int S = 0;
 
@@ -100,5 +100,25 @@ public class RSAUtil {
 
         return result;
     }
+
+    public BigInteger chineseRemainderTheorem(ArrayList<BigInteger> b, ArrayList<BigInteger> n, int k){
+        BigInteger product = BigInteger.ONE;
+
+
+        for (int i = 0; i < k; i++)
+            product = product.multiply(n.get(i));
+
+        BigInteger prod, x;
+        BigInteger sum = BigInteger.ZERO;
+
+        for (int i = 0; i < k; i++){
+            prod = product.divide(n.get(i));
+            x = extendedEuclidean(prod,n.get(i)).get(1);
+            sum = sum.add(b.get(i).multiply(x).multiply(prod));
+        }
+
+        return sum.mod(product);
+    }
+
 }
 
