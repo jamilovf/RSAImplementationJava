@@ -9,5 +9,10 @@ public class Main {
        else{
            System.out.println("is composite");
        }
+
+        System.out.println(rsaUtil.fastModularExp(BigInteger.valueOf(14546),
+                BigInteger.valueOf(14356), BigInteger.valueOf(45645)));
+
+        System.out.println(rsaUtil.extendedEuclidean(BigInteger.valueOf(125), BigInteger.valueOf(12)));
     }
 }
