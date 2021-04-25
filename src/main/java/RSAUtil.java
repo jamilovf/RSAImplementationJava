@@ -1,10 +1,19 @@
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class RSAUtil {
 
     public boolean isPrimeMillerRabin(BigInteger number, int round){
+        if(number.equals(BigInteger.TWO)){
+            return true;
+        }
+
+        if(number.mod(BigInteger.TWO).equals(BigInteger.ZERO) || number.compareTo(BigInteger.ONE) <= 0){
+            return false;
+        }
+
         boolean isComposite = false;
         BigInteger p = number.subtract(BigInteger.ONE);
         BigInteger d = p;
@@ -16,13 +25,13 @@ public class RSAUtil {
         }
 
         for (int i = 0; i < round; i++){
-           BigInteger a;
-           do {
-                a = new BigInteger(String.valueOf(2 + (int) (Math.random() * (p.intValue()))));
-           }
-            while (!p.gcd(new BigInteger(String.valueOf(a))).equals(BigInteger.ONE));
+           BigInteger a = getRandomBigInteger();
 
-            if(a.pow(d.intValue()).mod(number).equals(BigInteger.ONE)) {
+           if (!p.gcd(new BigInteger(String.valueOf(a))).equals(BigInteger.ONE)){
+               return false;
+           }
+
+            if(fastModularExp(a,d,number).equals(BigInteger.ONE)) {
                 continue;
             }
             for (int s = 0 ; s < S ; s++){
@@ -120,5 +129,10 @@ public class RSAUtil {
         return sum.mod(product);
     }
 
+    public static BigInteger getRandomBigInteger() {
+        Random random = new Random();
+        BigInteger result = BigInteger.probablePrime(1000, random);
+        return result;
+    }
 }
 
