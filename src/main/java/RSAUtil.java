@@ -110,7 +110,7 @@ public class RSAUtil {
         return result;
     }
 
-    public BigInteger chineseRemainderTheorem(ArrayList<BigInteger> b, ArrayList<BigInteger> n, int k){
+    public BigInteger chineseRemainderTheorem(List<BigInteger> b, List<BigInteger> n, int k){
         BigInteger product = BigInteger.ONE;
 
 

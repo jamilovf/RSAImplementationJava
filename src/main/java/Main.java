@@ -4,7 +4,7 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) {
-        RSAUtil rsaUtil = new RSAUtil();
+       /* RSAUtil rsaUtil = new RSAUtil();
        if(rsaUtil.isPrimeMillerRabin(BigInteger.valueOf(997),3)){
            System.out.println("possibly prime");
        }
@@ -27,7 +27,11 @@ public class Main {
                                 List.of(BigInteger.valueOf(5),
                                         BigInteger.valueOf(7),
                                         BigInteger.valueOf(8))),
-                        3));
+                        3));*/
 
+
+        List<BigInteger> list = RSA.encrypt(RSA.getN(),RSA.getE(),"Fuad");
+        System.out.println(list);
+        System.out.println(RSA.decryptWithFME(list,RSA.getD(),RSA.getN()));
     }
 }
