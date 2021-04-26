@@ -3,57 +3,51 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RSA {
-    private static BigInteger p;
-    private static BigInteger q;
-    private static BigInteger n;
-    private static BigInteger phiN;
-    private static BigInteger e;
-    private static BigInteger d;
-    private static RSAUtil rsaUtil;
+    private BigInteger p;
+    private BigInteger q;
+    private BigInteger n;
+    private BigInteger phiN;
+    private BigInteger e;
+    private BigInteger d;
 
-    static {
-        rsaUtil = new RSAUtil();
-        p = BigInteger.valueOf(13);
-        q = BigInteger.valueOf(19);
+    public RSA(){
+
+
+        p = Util.getRandomBigInteger();
+        q = Util.getRandomBigInteger();
         n = p.multiply(q);
-        phiN = phiForPrimes(p,q);
-        e = BigInteger.valueOf(47);
-        d = modularInverse(e,phiN).mod(phiN);
+        phiN = Util.phiForPrimes(p,q);
+        e = phiN.subtract(BigInteger.ONE);
+        d = Util.modularInverse(e,phiN).mod(phiN);
+
     }
 
 
 
-    public static BigInteger phiForPrimes(BigInteger p, BigInteger q){
-        return p.subtract(BigInteger.ONE).multiply(q.subtract(BigInteger.ONE));
-    }
 
-    public static BigInteger modularInverse(BigInteger e, BigInteger n){
-        return rsaUtil.extendedEuclidean(e,n).get(1);
-    }
-
-    public static List<BigInteger> encrypt(BigInteger n, BigInteger e,String message){
+    public List<BigInteger> encrypt(BigInteger n, BigInteger e,String message){
         List<BigInteger> encryptedMessage = new ArrayList<>();
 
         for(int i = 0; i < message.length(); i++){
             BigInteger m = BigInteger.valueOf(message.charAt(i));
-            encryptedMessage.add(rsaUtil.fastModularExp(m,e,n));
+            encryptedMessage.add(Util.fastModularExp(m,e,n));
         }
 
         return encryptedMessage;
     }
 
-    public static String decryptWithFME(List<BigInteger> ciphertext, BigInteger d, BigInteger n){
+    public String decryptWithFME(List<BigInteger> ciphertext, BigInteger d, BigInteger n){
         StringBuilder messageBuilder = new StringBuilder();
 
         for(int i = 0; i < ciphertext.size(); i++){
             BigInteger c = ciphertext.get(i);
-            messageBuilder.append((char)rsaUtil.fastModularExp(c,d,n).intValue());
+            messageBuilder.append((char) Util.fastModularExp(c,d,n).intValue());
         }
 
         return messageBuilder.toString();
     }
 
-    public static String decryptWithCRT(List<BigInteger> ciphertext, BigInteger d, BigInteger p, BigInteger q) {
+    public  String decryptWithCRT(List<BigInteger> ciphertext, BigInteger d, BigInteger p, BigInteger q) {
         StringBuilder messageBuilder = new StringBuilder();
         BigInteger n = p.multiply(q);
         BigInteger dp = d.mod(p.subtract(BigInteger.ONE));
@@ -62,54 +56,62 @@ public class RSA {
         for (int i = 0; i < ciphertext.size(); i++) {
             BigInteger mp,mq;
             BigInteger c = ciphertext.get(i);
-            mp = rsaUtil.fastModularExp(c,dp,p);
-            mq = rsaUtil.fastModularExp(c,dq,q);
+            mp = Util.fastModularExp(c,dp,p);
+            mq = Util.fastModularExp(c,dq,q);
             List<BigInteger> mList = new ArrayList<>(List.of(mp,mq));
             List<BigInteger> nList = new ArrayList<>(List.of(p,q));
 
-            messageBuilder.append((char) rsaUtil.chineseRemainderTheorem(mList, nList, 2).intValue());
+            messageBuilder.append((char) Util.chineseRemainderTheorem(mList, nList, 2).intValue());
         }
 
         return messageBuilder.toString();
     }
 
-    public static BigInteger getP() {
+    public BigInteger getP() {
         return p;
     }
 
-    public static void setP(BigInteger p) {
-        RSA.p = p;
+    public void setP(BigInteger p) {
+        this.p = p;
     }
 
-    public static BigInteger getQ() {
+    public BigInteger getQ() {
         return q;
     }
 
-    public static void setQ(BigInteger q) {
-        RSA.q = q;
+    public void setQ(BigInteger q) {
+        this.q = q;
     }
 
-    public static BigInteger getN() {
+    public BigInteger getN() {
         return n;
     }
 
-    public static void setN(BigInteger n) {
-        RSA.n = n;
+    public void setN(BigInteger n) {
+        this.n = n;
     }
 
-    public static BigInteger getE() {
+    public BigInteger getPhiN() {
+        return phiN;
+    }
+
+    public void setPhiN(BigInteger phiN) {
+        this.phiN = phiN;
+    }
+
+    public BigInteger getE() {
         return e;
     }
 
-    public static void setE(BigInteger e) {
-        RSA.e = e;
+    public void setE(BigInteger e) {
+        this.e = e;
     }
 
-    public static BigInteger getD() {
+    public BigInteger getD() {
         return d;
     }
 
-    public static void setD(BigInteger d) {
-        RSA.d = d;
+    public void setD(BigInteger d) {
+        this.d = d;
     }
 }

@@ -3,14 +3,18 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-public class RSAUtil {
+public class Util {
 
-    public boolean isPrimeMillerRabin(BigInteger number, int round){
-        if(number.equals(BigInteger.TWO)){
+    public static boolean isPrimeMillerRabin(BigInteger number, int round){
+        if(number.compareTo(BigInteger.ONE) <= 0){
+           throw new IllegalArgumentException();
+        }
+
+        if(number.equals(BigInteger.TWO) || number.equals(BigInteger.valueOf(3))){
             return true;
         }
 
-        if(number.mod(BigInteger.TWO).equals(BigInteger.ZERO) || number.compareTo(BigInteger.ONE) <= 0){
+        if(number.mod(BigInteger.TWO).equals(BigInteger.ZERO)){
             return false;
         }
 
@@ -25,9 +29,9 @@ public class RSAUtil {
         }
 
         for (int i = 0; i < round; i++){
-           BigInteger a = getRandomBigInteger();
+           BigInteger a = BigInteger.TWO;
 
-           if (!p.gcd(new BigInteger(String.valueOf(a))).equals(BigInteger.ONE)){
+           if (!number.gcd(new BigInteger(String.valueOf(a))).equals(BigInteger.ONE)){
                return false;
            }
 
@@ -36,8 +40,8 @@ public class RSAUtil {
             }
             for (int s = 0 ; s < S ; s++){
 
-                if(!a.pow(BigInteger.TWO.pow(s).multiply(d).intValue()).mod(number).equals(p) &&
-                        !a.pow(BigInteger.TWO.pow(s).multiply(d).intValue()).mod(number).equals(BigInteger.ONE)){
+                if(!fastModularExp(a,BigInteger.TWO.pow(s).multiply(d),number).equals(p) &&
+                        !fastModularExp(a,BigInteger.TWO.pow(s).multiply(d),number).equals(BigInteger.ONE)){
                     isComposite = true;
                 }
                 else {
@@ -51,7 +55,10 @@ public class RSAUtil {
         return true;
     }
 
-    public BigInteger fastModularExp(BigInteger base, BigInteger exp, BigInteger modNumber){
+    public static BigInteger fastModularExp(BigInteger base, BigInteger exp, BigInteger modNumber){
+        if(exp.compareTo(BigInteger.ONE) < 0){
+            throw new IllegalArgumentException();
+        }
         BigInteger finalResult = BigInteger.ONE;
 
         if(exp.equals(1)){
@@ -78,7 +85,7 @@ public class RSAUtil {
         return finalResult.mod(modNumber);
     }
 
-    public List<BigInteger> extendedEuclidean(BigInteger a, BigInteger b){
+    public static List<BigInteger> extendedEuclidean(BigInteger a, BigInteger b){
         List<BigInteger> q = new ArrayList<>();
         q.add(BigInteger.ZERO);
         List<BigInteger> r = new ArrayList<>();
@@ -110,7 +117,7 @@ public class RSAUtil {
         return result;
     }
 
-    public BigInteger chineseRemainderTheorem(List<BigInteger> b, List<BigInteger> n, int k){
+    public static BigInteger chineseRemainderTheorem(List<BigInteger> b, List<BigInteger> n, int k){
         BigInteger product = BigInteger.ONE;
 
 
@@ -129,9 +136,47 @@ public class RSAUtil {
         return sum.mod(product);
     }
 
+    public static BigInteger modularInverse(BigInteger e, BigInteger n){
+        return Util.extendedEuclidean(e,n).get(1);
+    }
+
+    public static BigInteger phiForPrimes(BigInteger p, BigInteger q){
+        return p.subtract(BigInteger.ONE).multiply(q.subtract(BigInteger.ONE));
+    }
+
     public static BigInteger getRandomBigInteger() {
         Random random = new Random();
-        BigInteger result = BigInteger.probablePrime(1000, random);
+        BigInteger result = BigInteger.probablePrime(16, random);
+        return result;
+    }
+
+    public static BigInteger randomPrimeBigInteger() {
+        boolean flagPrime = true;
+        Random rand = new Random();
+        BigInteger result = new BigInteger(1024, rand);
+        while (flagPrime) {
+            if (isPrimeMillerRabin(result, 1)) {
+                flagPrime = false;
+            }
+            else{
+                 result = new BigInteger(1024, rand);
+            }
+        }
+        return result;
+    }
+
+    public static BigInteger isCoPrime(BigInteger phiN){
+        boolean flagPrime = true;
+        Random rand = new Random();
+        BigInteger result = new BigInteger(1024, rand);
+        while (flagPrime) {
+            if (result.gcd(phiN).equals(BigInteger.ONE) && result.compareTo(phiN) < 0) {
+                flagPrime = false;
+            }
+            else{
+                result = new BigInteger(1024, rand);
+            }
+        }
         return result;
     }
 }
