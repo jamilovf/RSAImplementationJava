@@ -1,7 +1,5 @@
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 public class Util {
     private static List<Integer> primes;
@@ -13,6 +11,8 @@ public class Util {
     }
 
     public static boolean isPrimeMillerRabin(BigInteger number, int round){
+        BigInteger tmp;
+
         if(number.compareTo(BigInteger.ONE) <= 0){
            throw new IllegalArgumentException();
         }
@@ -36,9 +36,12 @@ public class Util {
         }
 
         for (int i = 0; i < round; i++){
-           BigInteger a = BigInteger.TWO;
+           BigInteger a = getRandomBigInteger(number.bitLength());
+            while(!(a.compareTo(BigInteger.TWO)>=0 && a.compareTo(p) < 0)){
+                a = getRandomBigInteger(number.bitLength());
+            }
 
-           if (!number.gcd(new BigInteger(String.valueOf(a))).equals(BigInteger.ONE)){
+           if (!extendedEuclidean(number,a).get(0).equals(BigInteger.ONE)){
                return false;
            }
 
@@ -46,20 +49,11 @@ public class Util {
                 continue;
             }
             for (int s = 0 ; s < S ; s++){
-
-                if(!fastModularExp(a,BigInteger.TWO.pow(s).multiply(d),number).equals(p) &&
-                        !fastModularExp(a,BigInteger.TWO.pow(s).multiply(d),number).equals(BigInteger.ONE)){
-                    isComposite = true;
-                }
-                else {
-                    isComposite = false;
-                }
+                tmp = fastModularExp(a, BigInteger.TWO.pow(s).multiply(d), number);
+                isComposite = !tmp.equals(p) && !tmp.equals(BigInteger.ONE);
             }
         }
-        if (isComposite == true){
-            return false;
-        }
-        return true;
+        return isComposite != true;
     }
 
     public static BigInteger fastModularExp(BigInteger base, BigInteger exp, BigInteger modNumber){
@@ -68,7 +62,7 @@ public class Util {
         }
         BigInteger finalResult = BigInteger.ONE;
 
-        if(exp.equals(1)){
+        if(exp.equals(BigInteger.ONE)){
             return  base.pow(exp.intValue()).mod(modNumber);
         }
 
@@ -151,37 +145,38 @@ public class Util {
         return p.subtract(BigInteger.ONE).multiply(q.subtract(BigInteger.ONE));
     }
 
-    public static BigInteger getRandomBigInteger() {
+    public static BigInteger getRandomBigInteger(int bitLength){
         Random random = new Random();
-        BigInteger result = BigInteger.probablePrime(1024, random);
+        return new BigInteger(bitLength,random);
+    }
+
+    public static BigInteger getRandomBigIntegerInRange(int bitLength,BigInteger min, BigInteger max){
+
+        BigInteger result = getRandomBigInteger(bitLength);
+        while(!(result.compareTo(min) > 0 && result.compareTo(max) < 0)){
+            result = getRandomBigInteger(bitLength);
+        }
         return result;
     }
 
     public static BigInteger randomPrimeBigInteger() {
-        boolean flagPrime = true;
-        Random rand = new Random();
-        BigInteger result = new BigInteger(1024, rand);
 
-        while (flagPrime) {
-            if (isPrimeMillerRabin(result, 1)) {
-                flagPrime = false;
-            }
-            else{
-                 result = new BigInteger(1024, rand);
-            }
+        Random rand = new Random();
+        BigInteger result = getRandomBigInteger(1024);
+
+        while (!isPrimeMillerRabin(result, 3)) {
+                 result = getRandomBigInteger(1024);
         }
         return result;
     }
 
     public static BigInteger isCoPrime(BigInteger phiN){
-        Random rand = new Random();
-
-        BigInteger result = new BigInteger(1024, rand);
-        BigInteger tmp;
-        while ((tmp = (result.gcd(phiN))).compareTo(BigInteger.ONE) > 0) {
-                result = result.divide(tmp);
+        BigInteger e = getRandomBigIntegerInRange(1024,BigInteger.ONE,phiN);
+        while(!(extendedEuclidean(e,phiN).get(0).equals(BigInteger.ONE))){
+            e = getRandomBigIntegerInRange(1024,BigInteger.ONE,phiN);
         }
-        return result;
+
+        return e;
     }
 
 }
