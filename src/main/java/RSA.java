@@ -17,7 +17,7 @@ public class RSA {
         q = Util.getRandomBigInteger();
         n = p.multiply(q);
         phiN = Util.phiForPrimes(p,q);
-        e = phiN.subtract(BigInteger.ONE);
+        e = Util.isCoPrime(phiN);
         d = Util.modularInverse(e,phiN).mod(phiN);
 
     }

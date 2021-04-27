@@ -65,7 +65,7 @@ public class Util {
             return  base.pow(exp.intValue()).mod(modNumber);
         }
 
-        String binaryRep = Integer.toBinaryString(exp.intValue());
+        String binaryRep = exp.toString(2);
         List<BigInteger> binaryRes = new ArrayList<>(binaryRep.length());
 
         BigInteger result = base.mod(modNumber);
@@ -146,7 +146,7 @@ public class Util {
 
     public static BigInteger getRandomBigInteger() {
         Random random = new Random();
-        BigInteger result = BigInteger.probablePrime(16, random);
+        BigInteger result = BigInteger.probablePrime(1024, random);
         return result;
     }
 
@@ -168,16 +168,17 @@ public class Util {
     public static BigInteger isCoPrime(BigInteger phiN){
         boolean flagPrime = true;
         Random rand = new Random();
-        BigInteger result = new BigInteger(1024, rand);
+        BigInteger result = new BigInteger(8, rand);
         while (flagPrime) {
             if (result.gcd(phiN).equals(BigInteger.ONE) && result.compareTo(phiN) < 0) {
                 flagPrime = false;
             }
             else{
-                result = new BigInteger(1024, rand);
+                result = new BigInteger(8, rand);
             }
         }
         return result;
     }
+
 }
 
