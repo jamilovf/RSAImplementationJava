@@ -13,8 +13,8 @@ public class RSA {
     public RSA(){
 
 
-        p = Util.getRandomBigInteger();
-        q = Util.getRandomBigInteger();
+        p = Util.randomPrimeBigInteger();
+        q = Util.randomPrimeBigInteger();
         n = p.multiply(q);
         phiN = Util.phiForPrimes(p,q);
         e = Util.isCoPrime(phiN);

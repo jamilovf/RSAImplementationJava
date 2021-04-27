@@ -5,7 +5,7 @@ import java.util.List;
 public class Main {
     public static void main(String[] args) {
 
-       if(Util.isPrimeMillerRabin(BigInteger.valueOf(561),1)){
+     /*  if(Util.isPrimeMillerRabin(BigInteger.valueOf(561),1)){
            System.out.println("possibly prime");
        }
        else{
@@ -27,7 +27,7 @@ public class Main {
                                 List.of(BigInteger.valueOf(5),
                                         BigInteger.valueOf(7),
                                         BigInteger.valueOf(8))),
-                        3));
+                        3));*/
 
         RSA rsa = new RSA();
         List<BigInteger> list = rsa.encrypt(rsa.getN(),rsa.getE(),"Fuad");
