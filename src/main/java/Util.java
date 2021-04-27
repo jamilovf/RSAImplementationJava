@@ -46,7 +46,7 @@ public class Util {
                 isComposite = !tmp.equals(p) && !tmp.equals(BigInteger.ONE);
             }
         }
-        return isComposite != true;
+        return !isComposite;
     }
 
     public static BigInteger fastModularExp(BigInteger base, BigInteger exp, BigInteger modNumber){
